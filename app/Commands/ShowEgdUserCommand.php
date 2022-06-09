@@ -2,8 +2,10 @@
 
 namespace App\Commands;
 
-use Illuminate\Console\Scheduling\Schedule;
+use App\Support\Http\GetUser;
+use Illuminate\Support\Facades\Http;
 use LaravelZero\Framework\Commands\Command;
+use function Termwind\{render};
 
 class ShowEgdUserCommand extends Command
 {
@@ -12,14 +14,14 @@ class ShowEgdUserCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'user:show {lastname? : The last name of the user (optional)}';
 
     /**
      * The description of the command.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Show user information';
 
     /**
      * Execute the console command.
@@ -28,17 +30,15 @@ class ShowEgdUserCommand extends Command
      */
     public function handle()
     {
-        //
-    }
+        $player = app(GetUser::class)(
+            lastname: $this->argument('lastname')
+        );
 
-    /**
-     * Define the command's schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
-    public function schedule(Schedule $schedule): void
-    {
-        // $schedule->command(static::class)->everyMinute();
+        $view = view(
+            'users.show',
+            $player
+        );
+
+        render((string) $view);
     }
 }
